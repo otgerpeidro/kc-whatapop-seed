@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, RequestOptions, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
@@ -28,6 +28,12 @@ export class ProductService {
     |                                                                  |
     |   _sort=publishedDate&_order=DESC                                |
     |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    
+      let search = new URLSearchParams();
+
+      search.set("_sort", "publishedDate");
+      search.set("_order", "DESC");
+    
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
     | Red Path                                                         |
@@ -45,6 +51,15 @@ export class ProductService {
     |       category.id=x (siendo x el identificador de la categoría)  |
     |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+    if (filter){
+      if (filter.text) {
+          search.set("q", filter.text);
+      }else if (filter.category) {
+          search.set("category.id", filter.category);
+      }
+       
+       
+     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
     | Yellow Path                                                      |
     |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
@@ -58,9 +73,15 @@ export class ProductService {
     |   - Búsqueda por estado:                                         |
     |       state=x (siendo x el estado)                               |
     |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+      else if(filter.category) {
+        search.set("state", filter.category);
+      }
+    } 
+      let options = new RequestOptions();
+      options.search = search;     
 
     return this._http
-      .get(`${this._backendUri}/products`)
+      .get(`${this._backendUri}/products`, options)
       .map((data: Response): Product[] => Product.fromJsonToList(data.json()));
   }
 
