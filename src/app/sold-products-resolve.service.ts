@@ -27,11 +27,11 @@ export class SoldProductsResolveService implements Resolve<Product[]> {
     |    ProductService, que tendrás que inyectar como dependencia.    |
     |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    let filter: ProductFilter = <ProductFilter>{
+    const filter: ProductFilter = <ProductFilter>{
       state: 'sold'
     };
   
-     return this._productService.getProducts(filter.state);
+     return this._productService.getProducts(filter);
     
   }
 

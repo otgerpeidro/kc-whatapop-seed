@@ -54,7 +54,8 @@ export class ProductService {
     if (filter){
       if (filter.text) {
           search.set("q", filter.text);
-      }else if (filter.category) {
+      }
+      if (filter.category) {
           search.set("category.id", filter.category);
       }
        
@@ -73,16 +74,18 @@ export class ProductService {
     |   - Búsqueda por estado:                                         |
     |       state=x (siendo x el estado)                               |
     |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-      else if(filter.category) {
-        search.set("state", filter.category);
+      if(filter.state) {
+        search.set("state", filter.state);
       }
     } 
-      let options = new RequestOptions();
+      const options = new RequestOptions();
       options.search = search;     
 
     return this._http
       .get(`${this._backendUri}/products`, options)
-      .map((data: Response): Product[] => Product.fromJsonToList(data.json()));
+      .map((data: Response): Product[] => {
+        return Product.fromJsonToList(data.json());
+      });
   }
 
   getProduct(productId: number): Observable<Product> {
